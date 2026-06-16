@@ -3,14 +3,21 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
+const authRoutes = require('./routes/auth.routes');
+const connectDB=require('./config/db');
 require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
 
+connectDB();
+
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+//API routes
+app.use('/api/auth', authRoutes);
 
 // Basic Route
 app.get('/', (req, res) => {
