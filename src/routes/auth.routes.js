@@ -1,8 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const { register } = require('../controllers/authController'); // <-- Import the controller logic
+const { register, verifyOTP ,login, 
+   forgotPassword, 
+  verifyResetOTP, 
+  resetPassword} = require('../controllers/authController'); // <-- Import the controller logic
 
 // Route path: /api/auth/register
-router.post('/register', register); // <-- Pass the register function here
+router.post('/register', register);
+router.post('/verify-otp',verifyOTP); 
+router.post('/login',login);
+router.post('/forgot-password', forgotPassword);   
+router.post('/verify-reset-otp', verifyResetOTP); 
+router.post('/reset-password', resetPassword);   
 
 module.exports = router;
