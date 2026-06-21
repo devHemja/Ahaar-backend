@@ -45,7 +45,7 @@ const userSchema= new mongoose.Schema(
             },
             coordinates:{
                 type:[Number],
-                required:false,
+                index:'2dsphere'
             },
         },
         refreshToken:{
@@ -59,6 +59,5 @@ const userSchema= new mongoose.Schema(
     }
 );
 
-userSchema.index({email:1});
 
 module.exports=mongoose.model('User',userSchema);

@@ -5,7 +5,9 @@ const { Server } = require('socket.io');
 const cors = require('cors');
 const authRoutes = require('./routes/auth.routes');
 const connectDB=require('./config/db');
-
+const cookieParser = require('cookie-parser');
+const ngoRoutes = require('./routes/ngo.routes');
+const foodRoutes = require('./routes/food.routes');
 
 const app = express();
 const server = http.createServer(app);
@@ -15,9 +17,13 @@ connectDB();
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
+
 
 //API routes
-app.use('/api/auth', authRoutes);
+app.use('/api', authRoutes);
+app.use('/api', ngoRoutes);
+app.use('/api', foodRoutes);
 
 // Basic Route
 app.get('/', (req, res) => {

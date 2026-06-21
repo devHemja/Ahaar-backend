@@ -132,10 +132,17 @@ exports.login = async (req, res) => {
       { expiresIn: '7d' }
     );
 
-    // 6. Respond with user info and the token
+    // 6. Set the token inside an HTTP-Only Cookie 🌟
+    res.cookie('token', token, {
+      httpOnly: true,     // Prevents frontend JS from reading it (Stops XSS)
+      secure: process.env.NODE_ENV === 'production', // true in production (HTTPS required)
+      sameSite: 'strict', // Protects against CSRF attacks
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
+    });
+
+    // 7. Respond with user info (Notice 'token' is dropped from the JSON body)
     res.status(200).json({
       message: 'Login successful!',
-      token,
       user: {
         id: user._id,
         name: user.name,
@@ -232,6 +239,55 @@ exports.resetPassword = async (req, res) => {
     await OTP.deleteOne({ _id: otpRecord._id });
 
     res.status(200).json({ message: 'Password updated successfully! You can now log in.' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Logout User & Clear Cookie
+// @route   POST /api/auth/logout
+exports.logout = async (req, res) => {
+  try {
+    // Clear the 'token' cookie by setting its expiration to immediately
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict'
+    });
+
+    res.status(200).json({ message: 'Logged out successfully!' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Update User Location Coordinates
+// @route   PUT /api/auth/location
+// @access  Private (Requires JWT verification)
+exports.updateLocation = async (req, res) => {
+  try {
+    const { longitude, latitude } = req.body;
+
+    if (!longitude || !latitude) {
+      return res.status(400).json({ message: 'Longitude and latitude are required' });
+    }
+
+    // Update user location in GeoJSON Point format
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.userId, // Decoded from your auth middleware
+      {
+        location: {
+          type: 'Point',
+          coordinates: [parseFloat(longitude), parseFloat(latitude)]
+        }
+      },
+      { new: true }
+    ).select('-password');
+
+    res.status(200).json({
+      message: 'Location synchronized successfully!',
+      location: updatedUser.location
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
