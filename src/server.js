@@ -15,13 +15,16 @@ const server = http.createServer(app);
 connectDB();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,  // required for HTTP-only cookie to work
+}));
 app.use(express.json());
 app.use(cookieParser());
 
 
 //API routes
-app.use('/api', authRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api', ngoRoutes);
 app.use('/api', foodRoutes);
 
