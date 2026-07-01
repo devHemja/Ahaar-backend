@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { getNearbyNGOs } = require('../controllers/ngoController');
-const { verifyToken } = require('../middleware/auth');
 
-// GET http://localhost:5000/api/ngos/nearby
-router.get('/ngos/nearby', verifyToken, getNearbyNGOs);
+const { verifyToken, requireRole } = require('../middleware/VerifyToken');
+const { getNearbyNGOs } = require('../controllers/ngoController');
+
+// GET /api/ngos/nearby — verified NGOs within 10km of the logged-in donor
+router.get('/ngos/nearby', verifyToken, requireRole('donor'), getNearbyNGOs);
 
 module.exports = router;

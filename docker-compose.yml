@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  backend:
+    build: .
+    container_name: ahaar-backend
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+    env_file:
+      - .env

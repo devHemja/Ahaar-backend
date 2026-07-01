@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
-const ngoSchema = new mongoose.Schema(
+const donorSchema = new mongoose.Schema(
   {
-    orgName: {
+    name: {
       type: String,
-      required: [true, 'Organization Name is Required'],
+      required: [true, 'Name is Required'],
       trim: true,
     },
     email: {
@@ -18,20 +18,14 @@ const ngoSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Password is required'],
     },
-    regNumber: {
-      type: String,
-      required: [true, 'NGO Registration Number is Required'],
-      unique: true,
-      trim: true,
-    },
     role: {
       type: String,
-      default: 'ngo', // Lock role strictly to ngo
+      default: 'donor', // Lock role strictly to donor
     },
     isVerified: {
       type: Boolean,
       required: true,
-      default: false, // Requires admin authorization verification
+      default: false,
     },
     emailOTP: {
       type: String,
@@ -42,21 +36,11 @@ const ngoSchema = new mongoose.Schema(
       default: null,
     },
     address: {
-      type: String,
+      type: String, // Human-readable location, shown in the UI (e.g. "Connaught Place, New Delhi")
       trim: true,
       default: '',
     },
-    category: {
-      type: String,
-      trim: true,
-      default: 'Food Relief', // e.g. Food Relief, Community Kitchen, Child Nutrition
-    },
-    phone: {
-      type: String,
-      trim: true,
-      default: '',
-    },
-location: {
+    location: {
   type: {
     type: String,
     enum: ['Point'],
@@ -78,4 +62,4 @@ location: {
   }
 );
 
-module.exports = mongoose.model('NGO', ngoSchema);
+module.exports = mongoose.model('Donor', donorSchema);

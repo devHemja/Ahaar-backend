@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const foodListingSchema = new mongoose.Schema({
   donorId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'Donor',
     required: true // Links to the donor account 
   },
   foodType: {
